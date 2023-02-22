@@ -1,36 +1,32 @@
-const fetchPokemon = () => {
-  const getPokemonUrl = id => `https://pokeapi.co/api/v2/pokemon/${id}`
+const getPokemonUrl = id => `https://pokeapi.co/api/v2/pokemon/${id}`
 
-  const pokemonPromises = []
-
-  for (let i = 1; i <= 150; i++) {
-    pokemonPromises.push(
-      fetch(getPokemonUrl(i)).then(response => response.json())
+const generatePokemonPromisses = () =>
+  Array(150)
+    .fill()
+    .map((_, index) =>
+      fetch(getPokemonUrl(index + 1)).then(response => response.json())
     )
-  }
 
-  Promise.all(pokemonPromises).then(pokemons => {
-    const lisPokemons = pokemons.reduce((accumulator, pokemon) => {
-      const types = pokemon.types.map(typeInfo => typeInfo.type.name)
+const generateHTML = pokemons =>
+  pokemons.reduce((accumulator, { name, id, types }) => {
+    const ElementTypes = types.map(typeInfo => typeInfo.type.name)
 
-      accumulator += `
-      <li class="card">
-      <img class="card-image ${types[0]}" alt="${
-        pokemon.name
-      }" src="https://raw.githubusercontent.com/RafaelSilva2k22/PokemonImages/main/images/${
-        pokemon.id
-      }.png" />
-       <h2 class="card-title">${pokemon.id}. ${pokemon.name}</h2>
-       <p class="card-subtitle">${types.join(' | ')} </p>
-      </li>
-      `
-      return accumulator
-    }, '')
+    accumulator += `
+  <li class="card ${ElementTypes[0]}">
+  <img class="card-image" alt="${name}" src="https://raw.githubusercontent.com/RafaelSilva2k22/PokemonImages/main/images/${id}.png" />
+     <h2 class="card-title">${id}. ${name}</h2>
+     <p class="card-subtitle">${ElementTypes.join(' | ')} </p>
+    </li>
+    `
+    return accumulator
+  }, '')
 
-    const ul = document.querySelector('[data-js="pokedex"]')
+const insertPokemonIntoPage = pokemons => {
+  const ul = document.querySelector('[data-js="pokedex"]')
 
-    ul.innerHTML = lisPokemons
-  })
+  ul.innerHTML = pokemons
 }
 
-fetchPokemon()
+const pokemonPromises = generatePokemonPromisses()
+
+Promise.all(pokemonPromises).then(generateHTML).then(insertPokemonIntoPage)
