@@ -1,2 +1,2 @@
 # pokedex-javascript
-A javascript project to create a pokedex
+Um projeto de Javascript que usa a [PokéAPI](https://pokeapi.co/) (uma API RESTful) para criar uma interface contendo informações dos primeiros 150 pokémons.
